@@ -49,13 +49,13 @@
   "devDependencies": {
     "@babel/eslint-plugin": "^7.14.5",
     "babel-eslint": "^10.1.0",
-    "eslint": "^8.4.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-plugin-import": "^2.25.3",
-    "husky": "^7.0.4",
-    "lint-staged": "^12.1.2",
-    "nodemon": "^2.0.15",
-    "prettier": "^2.5.1",
-    "sequelize-cli": "^6.3.0"
+    "eslint": "^7.2.0",
+    "eslint-config-airbnb-base": "^14.2.0",
+    "eslint-plugin-import": "^2.21.2",
+    "husky": "^4.2.5",
+    "lint-staged": "^10.2.11",
+    "nodemon": "^2.0.4",
+    "prettier": "^2.0.5",
+    "sequelize-cli": "^5.5.1"
   }
 }

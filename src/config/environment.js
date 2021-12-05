@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const environment = {
   ENVIRONMENT: process.env.NODE_ENV || 'development',
-  BASE_URL: process.env.BASE_URL || 'localhost' ,
+  BASE_URL: process.env.BASE_URL || 'localhost',
   PORT: process.env.PORT || 3030,
   // JWT: {
   //   expirationMinutes: process.env.JWT_EXPIRES_TIME || 20,
