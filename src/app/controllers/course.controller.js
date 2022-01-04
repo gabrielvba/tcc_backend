@@ -36,10 +36,10 @@ const create = async (req, res) => {
 const getById = async (req, res) => {
   try {
     const { id } = req.params;
-
+    const { includeDiscipline } = req.query;
     log.info(`Iniciando busca por curso. courseId = ${id}`);
 
-    const course = await service.getById(id);
+    const course = await service.getById(id, includeDiscipline);
 
     if (!course) {
       return res
@@ -130,7 +130,7 @@ const edit = async (req, res) => {
   }
 };
 
-const delet = async (req, res) => {
+const deleteCourse = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -144,7 +144,7 @@ const delet = async (req, res) => {
         .json({ error: 'curso não encontrado' });
     }
 
-    await service.delet(course);
+    await service.deleteCourse(course);
 
     log.info('Finalizando remoção do curso.');
     return res.status(StatusCodes.OK).json('curso deletado com sucesso.');
@@ -164,5 +164,5 @@ module.exports = {
   getById,
   getAll,
   edit,
-  delet,
+  deleteCourse,
 };
