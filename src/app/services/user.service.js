@@ -70,7 +70,7 @@ const updateUser = (id, data) => User.update(data, {
   },
 });
 
-const delet = (user) => user.destroy();
+const deleteUser = (user) => user.destroy();
 
 module.exports = {
   create,
@@ -79,5 +79,5 @@ module.exports = {
   getAll,
   getJustUserById,
   updateUser,
-  delet,
+  deleteUser,
 };

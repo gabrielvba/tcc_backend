@@ -1,5 +1,5 @@
 const express = require('express');
-const controller = require('../controllers/course.controller');
+const controller = require('../controllers/discipline.controller');
 
 const router = express.Router();
 
@@ -10,6 +10,6 @@ router.put('/:id', controller.edit);
 
 router.post('/', controller.create);
 
-router.delete('/:id', controller.deleteCourse);
+router.delete('/:id', controller.deleteDiscipline);
 
 module.exports = router;
