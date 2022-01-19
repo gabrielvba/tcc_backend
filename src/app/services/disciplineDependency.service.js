@@ -1,43 +1,35 @@
 // const { Op } = require('sequelize');
-const { Discipline } = require('../models');
+const { DisciplineDependency, Discipline } = require('../models');
 // const log = require('./log.service');
 
-const create = (data) => Discipline.create(data);
+const create = (data) => DisciplineDependency.create(data);
 
-const getByName = (name) => Discipline.findOne({
+const getById = (id) => DisciplineDependency.findByPk(id);
+
+const getByDisciplineId = (id) => DisciplineDependency.findAll({
   where: {
-    name,
+    disciplineId: id,
   },
-});
-
-const getById = (id) => Discipline.findByPk(id, {
   include: [
     {
       model: Discipline,
-      as: 'discipline',
-      attributes: {
-        exclude: [
-          'createdAt',
-          'updatedAt',
-          'description',
-          'summary',
-          'period',
-          'value',
-          'courseId',
-          'name',
-          'code',
-          'type',
-        ],
-      },
+      as: 'dependency',
     },
   ],
+});
+
+const getByDisciplineIdAndDependencyId = (dependency) => DisciplineDependency.findAll({
+  where: {
+    disciplineId: dependency.disciplineId,
+    dependencyId: dependency.dependencyId,
+  },
 });
 
 const getAll = async (query) => {
   const page = parseInt(query.page, 10);
   const pageSize = parseInt(query.pageSize, 10);
   let offset = null;
-  let disciplines = null;
+  let dependencies = null;
   //   const { search } = query;
 
   const where = {};
@@ -70,32 +62,32 @@ const getAll = async (query) => {
     const options = {
       limit: pageSize,
       offset,
-      distinct: true,
       where,
     };
-    disciplines = await Discipline.findAndCountAll(options);
+    dependencies = await DisciplineDependency.findAndCountAll(options);
 
-    disciplines.pages = Math.ceil(disciplines.count / pageSize);
+    dependencies.pages = Math.ceil(dependencies.count / pageSize);
   } else {
-    disciplines = await Discipline.findAll({ where });
+    dependencies = await DisciplineDependency.findAll({ where });
   }
 
-  return disciplines;
+  return dependencies;
 };
 
-const updateDiscipline = (id, data) => Discipline.update(data, {
+const updateDependency = (id, data) => DisciplineDependency.update(data, {
   where: {
     id,
   },
 });
 
-const deleteDiscipline = (discipline) => discipline.destroy();
+const deleteDependency = (dependecy) => dependecy.destroy();
 
 module.exports = {
   create,
-  getByName,
   getById,
+  getByDisciplineId,
+  getByDisciplineIdAndDependencyId,
   getAll,
-  updateDiscipline,
-  deleteDiscipline,
+  updateDependency,
+  deleteDependency,
 };
