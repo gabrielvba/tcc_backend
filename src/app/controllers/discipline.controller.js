@@ -63,7 +63,7 @@ const getById = async (req, res) => {
     log.info(`Finalizando busca por disciplina. disciplineId = ${id}`);
     return res.status(StatusCodes.OK).json(discipline);
   } catch (error) {
-    const errorMsg = 'Erro buscar curso';
+    const errorMsg = 'Erro buscar disciplina';
 
     log.error(
       errorMsg,
