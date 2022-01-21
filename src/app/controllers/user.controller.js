@@ -94,24 +94,15 @@ const getAll = async (req, res) => {
 
 const edit = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { user } = req.body;
+    const { id } = req.user;
+    const { newUser } = req.body;
 
     log.info(`Iniciando atualização do usuário. userId = ${id}`);
-    log.info('Verificando se usuário existe');
 
-    const existedUser = await service.getJustUserById(id);
+    if (newUser?.email) {
+      log.info(`Validando email. email = ${newUser.email}`);
 
-    if (!existedUser) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'Usuário não encontrado' });
-    }
-
-    if (user?.email) {
-      log.info(`Validando email. email = ${user.email}`);
-
-      const userWithSameEmail = await service.getByEmail(user.email);
+      const userWithSameEmail = await service.getByEmail(newUser.email);
 
       if (userWithSameEmail && `${userWithSameEmail.id}` !== `${id}`) {
         return res
@@ -120,9 +111,9 @@ const edit = async (req, res) => {
       }
     }
 
-    if (user) {
+    if (newUser) {
       log.info('Atualizando dados do usuário');
-      await service.updateUser(id, user);
+      await service.updateUser(id, newUser);
     }
 
     log.info('Buscando dados atualizados do usuário');

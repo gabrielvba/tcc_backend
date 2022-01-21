@@ -4,11 +4,11 @@ const environment = {
   ENVIRONMENT: process.env.NODE_ENV || 'development',
   BASE_URL: process.env.BASE_URL || 'localhost',
   PORT: process.env.PORT || 3030,
-  // JWT: {
-  //   expirationMinutes: process.env.JWT_EXPIRES_TIME || 20,
-  //   expirationLogin: process.env.JWT_EXPIRES_TIME_LOGIN || 24,
-  //   secret: process.env.JWT_SECRET,
-  // },
+  JWT: {
+    expirationMinutes: process.env.JWT_EXPIRES_TIME || 20,
+    expirationLogin: process.env.JWT_EXPIRES_TIME_LOGIN || 24,
+    secret: process.env.JWT_SECRET,
+  },
   // EMAIL: {
   //   email: process.env.GMAIL_EMAIL,
   //   password: process.env.GMAIL_PASSWORD,
