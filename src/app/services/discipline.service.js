@@ -1,33 +1,43 @@
 // const { Op } = require('sequelize');
-const { Course, Discipline } = require('../models');
+const { Discipline } = require('../models');
 // const log = require('./log.service');
 
-const create = (data) => Course.create(data);
+const create = (data) => Discipline.create(data);
 
-const getById = async (id, includeDiscipline = true) => {
-  let result = null;
+const getByName = (name) => Discipline.findOne({
+  where: {
+    name,
+  },
+});
 
-  if (includeDiscipline !== 'false') {
-    result = await Course.findByPk(id, {
-      include: {
-        model: Discipline,
-        as: 'disciplines',
+const getById = (id) => Discipline.findByPk(id, {
+  include: [
+    {
+      model: Discipline,
+      as: 'discipline',
+      attributes: {
+        exclude: [
+          'createdAt',
+          'updatedAt',
+          'description',
+          'summary',
+          'period',
+          'value',
+          'courseId',
+          'name',
+          'code',
+          'type',
+        ],
       },
-    });
-  } else {
-    result = await Course.findByPk(id);
-  }
-
-  return result;
-};
-
-const getJustCourseById = (id) => Course.findByPk(id);
+    },
+  ],
+});
 
 const getAll = async (query) => {
   const page = parseInt(query.page, 10);
   const pageSize = parseInt(query.pageSize, 10);
   let offset = null;
-  let courses = null;
+  let disciplines = null;
   //   const { search } = query;
 
   const where = {};
@@ -63,29 +73,29 @@ const getAll = async (query) => {
       distinct: true,
       where,
     };
-    courses = await Course.findAndCountAll(options);
+    disciplines = await Discipline.findAndCountAll(options);
 
-    courses.pages = Math.ceil(courses.count / pageSize);
+    disciplines.pages = Math.ceil(disciplines.count / pageSize);
   } else {
-    courses = await Course.findAll({ where });
+    disciplines = await Discipline.findAll({ where });
   }
 
-  return courses;
+  return disciplines;
 };
 
-const updateCourse = (id, data) => Course.update(data, {
+const updateDiscipline = (id, data) => Discipline.update(data, {
   where: {
     id,
   },
 });
 
-const deleteCourse = (course) => course.destroy();
+const deleteDiscipline = (discipline) => discipline.destroy();
 
 module.exports = {
   create,
+  getByName,
   getById,
   getAll,
-  getJustCourseById,
-  updateCourse,
-  deleteCourse,
+  updateDiscipline,
+  deleteDiscipline,
 };

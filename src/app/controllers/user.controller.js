@@ -141,7 +141,7 @@ const edit = async (req, res) => {
   }
 };
 
-const delet = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -155,7 +155,7 @@ const delet = async (req, res) => {
         .json({ error: 'Usuário não encontrado' });
     }
 
-    await service.delet(user);
+    await service.deleteUser(user);
 
     log.info('Finalizando remoção de usuário.');
     return res.status(StatusCodes.OK).json('Usuário deletado com sucesso.');
@@ -175,5 +175,5 @@ module.exports = {
   getById,
   getAll,
   edit,
-  delet,
+  deleteUser,
 };

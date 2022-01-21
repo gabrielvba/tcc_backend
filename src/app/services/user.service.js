@@ -1,5 +1,5 @@
 const { Op } = require('sequelize');
-const { User } = require('../models');
+const { User, Discipline } = require('../models');
 // const log = require('./log.service');
 
 const create = (data) => User.create(data);
@@ -10,7 +10,14 @@ const getByEmail = (email) => User.findOne({
   },
 });
 
-const getById = (id) => User.findByPk(id);
+const getById = (id) => User.findByPk(id, {
+  include: [
+    {
+      model: Discipline,
+      as: 'user',
+    },
+  ],
+});
 
 const getJustUserById = (id) => User.findByPk(id);
 
@@ -70,7 +77,7 @@ const updateUser = (id, data) => User.update(data, {
   },
 });
 
-const delet = (user) => user.destroy();
+const deleteUser = (user) => user.destroy();
 
 module.exports = {
   create,
@@ -79,5 +86,5 @@ module.exports = {
   getAll,
   getJustUserById,
   updateUser,
-  delet,
+  deleteUser,
 };
