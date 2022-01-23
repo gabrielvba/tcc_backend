@@ -3,6 +3,7 @@
 const courses = [
   {
     name: 'Ciência da Computação',
+    userId: 1,
     minOptSpecific: 58,
     minOptGeneral: 16,
     description: '',

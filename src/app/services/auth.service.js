@@ -7,6 +7,7 @@ const login = async (email, password) => {
     },
     attributes: {
       include: 'passwordHash',
+      exclude: ['createdAt', 'updatedAt'],
     },
   });
 
@@ -20,7 +21,7 @@ const login = async (email, password) => {
 
   return {
     token: user.generateAuthToken(),
-    user,
+    // user,
   };
 };
 
@@ -31,6 +32,7 @@ const verifyForgetPasswordCode = async (email, code) => {
     },
     attributes: {
       include: 'forgetPasswordCode',
+      exclude: ['createdAt', 'updatedAt'],
     },
   });
 

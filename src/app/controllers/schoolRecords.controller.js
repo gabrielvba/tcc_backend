@@ -7,7 +7,7 @@ const { StatusCodes } = httpStatus;
 
 const getByUserId = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.user;
 
     log.info(`Iniciando busca por historico. userId = ${id}`);
 
@@ -38,33 +38,32 @@ const getByUserId = async (req, res) => {
 
 const create = async (req, res) => {
   try {
+    const { id } = req.user;
     const { schoolRecord } = req.body;
 
     if (!schoolRecord.disciplineId) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O id da disciplina precisa ser preenchido' });
     }
 
-    if (!schoolRecord.userId) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'O id da dependencia precisa ser preenchido' });
-    }
-
-    const discipline = serviceDiscipline.getById(schoolRecord.disciplineId);
+    const discipline = await serviceDiscipline.getById(
+      schoolRecord.disciplineId,
+    );
 
     if (!discipline) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O disciplineId precisa ser valido' });
     }
 
     log.info(
-      `Salvando disciplina no historico do user ${schoolRecord.userId}. Disciplina: ${discipline.name} Status: ${schoolRecord.status} `,
+      `Salvando disciplina no historico do user ${id}. Disciplina: ${discipline.name} Status: ${schoolRecord.status} `,
     );
-
-    const newSchoolRecord = await service.create(schoolRecord);
+    const newSchoolRecord = await service.create({
+      ...schoolRecord,
+      userId: id,
+    });
 
     log.info(
       `Buscando registro da disciplina no historico: ${newSchoolRecord.id}`,
@@ -91,38 +90,41 @@ const create = async (req, res) => {
 const updateSchoolRecord = async (req, res) => {
   try {
     const { id } = req.params;
+    const { user } = req;
     const { schoolRecord } = req.body;
 
     if (!schoolRecord.disciplineId) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O id da disciplina precisa ser preenchido' });
     }
 
-    if (!schoolRecord.userId) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'O id da dependencia precisa ser preenchido' });
-    }
-
-    const oldSchoolRecord = service.getById(id);
+    const oldSchoolRecord = await service.getById(id);
 
     if (!oldSchoolRecord) {
-      res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(StatusCodes.BAD_REQUEST).json({
         error: 'O registro a ser atualizada precisa ter um id valido',
       });
     }
 
-    const discipline = serviceDiscipline.getById(schoolRecord.disciplineId);
+    if (oldSchoolRecord.userId !== user.id) {
+      return res.status(StatusCodes.BAD_REQUEST).json({
+        error: 'O registro atualizada o registro de outro usuario',
+      });
+    }
+
+    const discipline = await serviceDiscipline.getById(
+      schoolRecord.disciplineId,
+    );
 
     if (!discipline) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O disciplineId precisa ser valido' });
     }
 
     log.info(
-      `Atualizando registro, user ${schoolRecord.userId}. Disciplina: ${discipline.name} Status: ${schoolRecord.status}`,
+      `Atualizando registro, user ${user.id}. Disciplina: ${discipline.name} Status: ${schoolRecord.status}`,
     );
 
     await service.updateSchoolRecord(id, schoolRecord);
@@ -150,6 +152,7 @@ const updateSchoolRecord = async (req, res) => {
 const deleteDependency = async (req, res) => {
   try {
     const { id } = req.params;
+    const { user } = req;
 
     log.info(`Iniciando remoção do registro. id = ${id}`);
 
@@ -159,6 +162,12 @@ const deleteDependency = async (req, res) => {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: 'Registro não encontrado' });
+    }
+
+    if (schoolRecord.userId !== user.id) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: 'Você não pode deletar esse registro' });
     }
 
     await service.deleteSchoolRecord(schoolRecord);

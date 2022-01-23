@@ -7,27 +7,38 @@ const { StatusCodes } = httpStatus;
 
 const create = async (req, res) => {
   try {
+    const { user } = req;
     const { discipline } = req.body;
 
     if (!discipline.name) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O nome precisa ser preenchido' });
     }
 
-    const course = courseService.getById(discipline.courseId);
+    const includeDiscipline = 'false';
+    const course = await courseService.getById(
+      discipline.courseId,
+      includeDiscipline,
+    );
 
     if (!course) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O cursoId precisa ser preenchido/valido' });
+    }
+
+    if (course.userId !== user.id) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: 'Você não pode criar disciplinas nesse curso' });
     }
 
     log.info(`Inicializando criação da Disciplina: ${discipline.name}`);
     const newDiscipline = await service.create(discipline);
 
-    log.info(`Buscando curso por id = ${newDiscipline.id}`);
-    const newDisciplineInfo = await service.getById(newDiscipline.id);
+    log.info(`Buscando disciplina por id = ${newDiscipline.id}`);
+    const newDisciplineInfo = await service.getDiscipline(newDiscipline.id);
 
     log.info('Finalizado a criação do discipline.');
     return res.status(StatusCodes.CREATED).json(newDisciplineInfo);
@@ -88,7 +99,7 @@ const getAll = async (req, res) => {
     log.info('Busca finalizada com sucesso');
     return res.status(StatusCodes.OK).json(disciplines);
   } catch (error) {
-    const errorMsg = 'Erro ao buscar curso';
+    const errorMsg = 'Erro ao buscar disciplinas';
 
     log.error(
       errorMsg,
@@ -106,16 +117,17 @@ const edit = async (req, res) => {
   try {
     const { id } = req.params;
     const { discipline } = req.body;
+    const { user } = req;
 
     log.info(`Iniciando atualização da disciplina. disciplineId = ${id}`);
     log.info('Verificando se a disciplina existe');
 
-    const existedDiscipline = await service.getById(id);
+    const existedDiscipline = await service.getDiscipline(id);
 
     if (!existedDiscipline) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'curso não encontrado' });
+        .json({ error: 'Disciplina não encontrada' });
     }
 
     if (discipline?.name) {
@@ -133,12 +145,16 @@ const edit = async (req, res) => {
       }
     }
 
-    const course = courseService.getById(discipline.courseId);
+    const includeDiscipline = 'false';
+    const course = await courseService.getById(
+      existedDiscipline.courseId,
+      includeDiscipline,
+    );
 
-    if (!course) {
-      res
+    if (course.userId !== user.id) {
+      return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'O cursoId precisa ser preenchido/valido' });
+        .json({ error: 'Você não pode alterar essa disciplina' });
     }
 
     if (discipline) {
@@ -146,13 +162,13 @@ const edit = async (req, res) => {
       await service.updateDiscipline(id, discipline);
     }
 
-    log.info('Buscando dados atualizados do curso');
-    const disciplineInfo = await service.getById(id);
+    log.info('Buscando dados atualizados da disciplina');
+    const disciplineInfo = await service.getDiscipline(id);
 
     log.info('Finalizando atualização');
     return res.status(StatusCodes.OK).json(disciplineInfo);
   } catch (error) {
-    const errorMsg = 'Erro atualizar curso';
+    const errorMsg = 'Erro atualizar disciplina';
 
     log.error(
       errorMsg,
@@ -169,15 +185,27 @@ const edit = async (req, res) => {
 const deleteDiscipline = async (req, res) => {
   try {
     const { id } = req.params;
+    const { user } = req;
 
     log.info(`Iniciando remoção da disciplina. disciplineId = ${id}`);
 
-    const discipline = await service.getById(id);
+    const discipline = await service.getDiscipline(id);
 
     if (!discipline) {
       return res
         .status(StatusCodes.NOT_FOUND)
         .json({ error: 'disciplina não encontrado' });
+    }
+    const includeDiscipline = 'false';
+    const course = await courseService.getById(
+      discipline.courseId,
+      includeDiscipline,
+    );
+
+    if (course.userId !== user.id) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: 'Você não deletar essa disciplina' });
     }
 
     await service.deleteDiscipline(discipline);

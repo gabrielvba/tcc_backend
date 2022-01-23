@@ -1,6 +1,4 @@
-// const { Op } = require('sequelize');
 const { Course, Discipline } = require('../models');
-// const log = require('./log.service');
 
 const create = (data) => Course.create(data);
 
@@ -9,13 +7,23 @@ const getById = async (id, includeDiscipline = true) => {
 
   if (includeDiscipline !== 'false') {
     result = await Course.findByPk(id, {
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
       include: {
         model: Discipline,
         as: 'disciplines',
+        attributes: {
+          exclude: ['createdAt', 'updatedAt', 'courseId'],
+        },
       },
     });
   } else {
-    result = await Course.findByPk(id);
+    result = await Course.findByPk(id, {
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+    });
   }
 
   return result;
@@ -23,36 +31,21 @@ const getById = async (id, includeDiscipline = true) => {
 
 const getJustCourseById = (id) => Course.findByPk(id);
 
-const getAll = async (query) => {
+const getByName = (name) => Course.findOne({
+  where: {
+    name,
+  },
+});
+
+const getMe = async (user, query) => {
   const page = parseInt(query.page, 10);
   const pageSize = parseInt(query.pageSize, 10);
   let offset = null;
   let courses = null;
-  //   const { search } = query;
 
-  const where = {};
-
-  //   if (search) {
-  //     where = {
-  //       [Op.or]: [
-  //         {
-  //           name: {
-  //             [Op.iRegexp]: `${search}`,
-  //           },
-  //         },
-  //         {
-  //           lastName: {
-  //             [Op.iRegexp]: `${search}`,
-  //           },
-  //         },
-  //         {
-  //           name: {
-  //             [Op.iRegexp]: `${search}`,
-  //           },
-  //         },
-  //       ],
-  //     };
-  //   }
+  const where = {
+    userId: user.id,
+  };
 
   if (page && pageSize) offset = (page - 1) * pageSize;
 
@@ -62,12 +55,51 @@ const getAll = async (query) => {
       offset,
       distinct: true,
       where,
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
     };
     courses = await Course.findAndCountAll(options);
 
     courses.pages = Math.ceil(courses.count / pageSize);
   } else {
-    courses = await Course.findAll({ where });
+    courses = await Course.findAll({
+      where,
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+    });
+  }
+
+  return courses;
+};
+
+const getAll = async (query) => {
+  const page = parseInt(query.page, 10);
+  const pageSize = parseInt(query.pageSize, 10);
+  let offset = null;
+  let courses = null;
+
+  if (page && pageSize) offset = (page - 1) * pageSize;
+
+  if (offset !== null) {
+    const options = {
+      limit: pageSize,
+      offset,
+      distinct: true,
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+    };
+    courses = await Course.findAndCountAll(options);
+
+    courses.pages = Math.ceil(courses.count / pageSize);
+  } else {
+    courses = await Course.findAll({
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
+    });
   }
 
   return courses;
@@ -84,7 +116,9 @@ const deleteCourse = (course) => course.destroy();
 module.exports = {
   create,
   getById,
+  getByName,
   getAll,
+  getMe,
   getJustCourseById,
   updateCourse,
   deleteCourse,

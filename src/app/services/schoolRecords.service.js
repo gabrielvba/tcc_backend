@@ -4,7 +4,11 @@ const { SchoolRecord } = require('../models');
 
 const create = (data) => SchoolRecord.create(data);
 
-const getById = (id) => SchoolRecord.findByPk(id);
+const getById = (id) => SchoolRecord.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
+});
 
 const updateSchoolRecord = (id, data) => SchoolRecord.update(data, {
   where: {

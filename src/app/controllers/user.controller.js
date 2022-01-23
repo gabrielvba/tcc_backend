@@ -29,12 +29,39 @@ const create = async (req, res) => {
     const newUser = await service.create(user);
 
     log.info(`Buscando usuário por id = ${newUser.id}`);
-    const userInfo = await service.getById(newUser.id);
+    const userInfo = await service.getJustUserById(newUser.id);
 
     log.info('Finalizado a criação de usuário.');
     return res.status(StatusCodes.CREATED).json(userInfo);
   } catch (error) {
     const errorMsg = 'Erro ao criar usuário';
+
+    log.error(errorMsg, 'app/controllers/user.controller.js', error.message);
+
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: `${errorMsg} ${error.message}` });
+  }
+};
+
+const getMe = async (req, res) => {
+  try {
+    const { id } = req.user;
+
+    log.info(`Iniciando busca por usuário. userId = ${id}`);
+
+    const user = await service.getById(id);
+
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: 'Usuário não encontrado' });
+    }
+
+    log.info(`Finalizando busca por usuário. userId = ${id}`);
+    return res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    const errorMsg = 'Erro buscar usuário';
 
     log.error(errorMsg, 'app/controllers/user.controller.js', error.message);
 
@@ -117,7 +144,7 @@ const edit = async (req, res) => {
     }
 
     log.info('Buscando dados atualizados do usuário');
-    const userInfo = await service.getById(id);
+    const userInfo = await service.getJustUserById(id);
 
     log.info('Finalizando atualização');
     return res.status(StatusCodes.OK).json(userInfo);
@@ -134,7 +161,7 @@ const edit = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.user;
 
     log.info(`Iniciando remoção de usuário. userId = ${id}`);
 
@@ -164,6 +191,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
   create,
   getById,
+  getMe,
   getAll,
   edit,
   deleteUser,

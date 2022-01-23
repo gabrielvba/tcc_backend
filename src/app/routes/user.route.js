@@ -5,17 +5,28 @@ const controllerSchoolRecords = require('../controllers/schoolRecords.controller
 
 const router = express.Router();
 
-router.get('/schoolRecords/:id', controllerSchoolRecords.getByUserId);
-router.put('/schoolRecords/:id', controllerSchoolRecords.updateSchoolRecord);
-router.post('/schoolRecords/', controllerSchoolRecords.create);
-router.delete('/schoolRecords/:id', controllerSchoolRecords.deleteDependency);
+router.get(
+  '/schoolRecords',
+  auth.verifyToken,
+  controllerSchoolRecords.getByUserId,
+);
+router.put(
+  '/schoolRecords/:id',
+  auth.verifyToken,
+  controllerSchoolRecords.updateSchoolRecord,
+);
+router.post('/schoolRecords', auth.verifyToken, controllerSchoolRecords.create);
+router.delete(
+  '/schoolRecords/:id',
+  auth.verifyToken,
+  controllerSchoolRecords.deleteDependency,
+);
 
-router.get('/', controller.getAll);
-router.get('/:id', controller.getById);
-// router.get('/me',controller.getMe);
+router.get('/me', auth.verifyToken, controller.getMe);
+router.get('/:id', auth.verifyToken, controller.getById);
+router.get('/', auth.verifyToken, controller.getAll);
 router.put('/', auth.verifyToken, controller.edit);
-// router.put('/me', controller.editMe);
 router.post('/', controller.create);
-router.delete('/:id', controller.deleteUser);
+router.delete('/', auth.verifyToken, controller.deleteUser);
 
 module.exports = router;

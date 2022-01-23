@@ -2,39 +2,55 @@ const httpStatus = require('http-status-codes');
 const log = require('../services/log.service');
 const service = require('../services/disciplineDependency.service');
 const serviceDiscipline = require('../services/discipline.service');
+const courseService = require('../services/course.service');
 
 const { StatusCodes } = httpStatus;
 
 const create = async (req, res) => {
   try {
+    const { user } = req;
     const { dependency } = req.body;
 
     if (!dependency.disciplineId) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O id da disciplina precisa ser preenchido' });
     }
 
     if (!dependency.dependencyId) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O id da dependencia precisa ser preenchido' });
     }
 
-    const discipline = serviceDiscipline.getById(dependency.disciplineId);
+    const discipline = await serviceDiscipline.getDiscipline(
+      dependency.disciplineId,
+    );
 
     if (!discipline) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O disciplineId precisa ser preenchido/valido' });
     }
 
-    const disciplineDependency = serviceDiscipline.getById(
+    const includeDiscipline = 'false';
+    const course = await courseService.getById(
+      discipline.courseId,
+      includeDiscipline,
+    );
+
+    if (course.userId !== user.id) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: 'Você não pode alterar essa disciplina' });
+    }
+
+    const disciplineDependency = await serviceDiscipline.getDiscipline(
       dependency.dependencyId,
     );
 
     if (!disciplineDependency) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O dependencyId precisa ser preenchido/valido' });
     }
@@ -122,69 +138,78 @@ const getAll = async (req, res) => {
 
 const updateDependency = async (req, res) => {
   try {
+    const { user } = req;
     const { id } = req.params;
     const { dependency } = req.body;
 
     if (!dependency.disciplineId) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O id da disciplina precisa ser preenchido' });
     }
 
     if (!dependency.dependencyId) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O id da dependencia precisa ser preenchido' });
     }
 
-    const oldDependency = service.getById(id);
+    const oldDependency = await service.getById(id);
 
     if (!oldDependency) {
-      res.status(StatusCodes.BAD_REQUEST).json({
+      return res.status(StatusCodes.BAD_REQUEST).json({
         error: 'A dependencia a ser atualizada precisa ter um id valido',
       });
     }
 
-    const discipline = serviceDiscipline.getById(dependency.disciplineId);
+    const discipline = await serviceDiscipline.getDiscipline(
+      dependency.disciplineId,
+    );
 
     if (!discipline) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'O disciplineId precisa ser preenchido/valido' });
+        .json({ error: 'O disciplineId precisa ser valido' });
     }
 
-    const disciplineDependency = serviceDiscipline.getById(
-      discipline.dependencyId,
+    const disciplineDependency = await serviceDiscipline.getDiscipline(
+      dependency.dependencyId,
     );
 
     if (!disciplineDependency) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'O dependencyId precisa ser preenchido/valido' });
+        .json({ error: 'O dependencyId precisa ser valido' });
     }
 
-    const existedSameDependency = service.getByDisciplineIdAndDependencyId(dependency);
+    const existedSameDependency = await service.getByDisciplineIdAndDependencyId(dependency);
 
     if (existedSameDependency) {
-      res
+      return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'Já existe uma dependencia com os mesmos atributos' });
     }
 
-    log.info(
-      `Atualizando a Dependencia: De ${oldDependency.disciplineId} depende de ${oldDependency.dependencyId} para ${discipline.name} depende de ${disciplineDependency.name} `,
-    );
-    log.info(
-      `Dependencia antiga: ${oldDependency.disciplineId} depende de ${oldDependency.dependencyId} `,
-    );
-    log.info(
-      `Dependencia atualizada: ${discipline.id} depende de ${disciplineDependency.id} `,
+    const includeDiscipline = 'false';
+    const course = await courseService.getById(
+      discipline.courseId,
+      includeDiscipline,
     );
 
-    const newDependency = await service.updateDiscipline(id, dependency);
+    if (course.userId !== user.id) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: 'Você não pode alterar essa disciplina' });
+    }
 
-    log.info(`Buscando dependecia por id = ${newDependency.id}`);
-    const newDependencyInfo = await service.getById(newDependency.id);
+    log.info(
+      `Atualizando a Dependencia: De ${oldDependency.disciplineId} depende de ${oldDependency.dependencyId} para ${discipline.id} depende de ${disciplineDependency.id} `,
+    );
+
+    await service.updateDependency(id, dependency);
+
+    log.info(`Buscando dependecia por id = ${id}`);
+    const newDependencyInfo = await service.getById(id);
 
     log.info('Finalizado a criação da dependencia.');
     return res.status(StatusCodes.CREATED).json(newDependencyInfo);
@@ -205,6 +230,7 @@ const updateDependency = async (req, res) => {
 
 const deleteDependency = async (req, res) => {
   try {
+    const { user } = req;
     const { id } = req.params;
 
     log.info(`Iniciando remoção da dependencia. id = ${id}`);
@@ -217,7 +243,23 @@ const deleteDependency = async (req, res) => {
         .json({ error: 'disciplina não encontrado' });
     }
 
-    await service.deleteDiscipline(dependency);
+    const discipline = await serviceDiscipline.getDiscipline(
+      dependency.disciplineId,
+    );
+
+    const includeDiscipline = 'false';
+    const course = await courseService.getById(
+      discipline.courseId,
+      includeDiscipline,
+    );
+
+    if (course.userId !== user.id) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: 'Você não pode alterar essa disciplina' });
+    }
+
+    await service.deleteDependency(dependency);
 
     log.info('Finalizando remoção da disciplina.');
     return res.status(StatusCodes.OK).json('disciplina deletada com sucesso.');
