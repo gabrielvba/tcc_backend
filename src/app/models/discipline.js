@@ -27,6 +27,11 @@ module.exports = (sequelize, DataTypes) => {
       foreignKey: 'dependencyId',
       as: 'dependency',
     });
+    Discipline.belongsToMany(models.User, {
+      through: 'SchoolRecords',
+      foreignKey: 'disciplineId',
+      as: 'schoolRecord',
+    });
   };
   return Discipline;
 };

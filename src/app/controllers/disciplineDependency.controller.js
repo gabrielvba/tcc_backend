@@ -140,11 +140,9 @@ const updateDependency = async (req, res) => {
     const oldDependency = service.getById(id);
 
     if (!oldDependency) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({
-          error: 'A dependencia a ser atualizada precisa ter um id valido',
-        });
+      res.status(StatusCodes.BAD_REQUEST).json({
+        error: 'A dependencia a ser atualizada precisa ter um id valido',
+      });
     }
 
     const discipline = serviceDiscipline.getById(dependency.disciplineId);

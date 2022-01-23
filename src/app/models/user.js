@@ -1,23 +1,76 @@
 /* eslint no-param-reassign: "error" */
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const config = require('../../config/environment');
 
 module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
-      name: DataTypes.STRING,
-      lastName: DataTypes.STRING,
-      description: DataTypes.STRING,
+      name: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+      },
+      lastName: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+      },
+      description: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+      },
       email: {
         type: DataTypes.STRING,
         unique: true,
         allowNull: false,
       },
+      password: DataTypes.VIRTUAL,
+      passwordHash: {
+        type: DataTypes.STRING,
+        defaultValue: null,
+        allowNull: true,
+      },
     },
-    {},
+    {
+      defaultScope: {
+        attributes: {
+          exclude: ['password', 'passwordHash'],
+        },
+      },
+    },
   );
 
-  User.associate = () => {
-    // associations can be defined here
+  User.associate = (models) => {
+    User.belongsToMany(models.Discipline, {
+      through: 'SchoolRecords',
+      foreignKey: 'userId',
+      as: 'user',
+    });
   };
+
+  User.addHook('beforeSave', async (user) => {
+    if (user.password) user.passwordHash = await bcrypt.hash(user.password, 5);
+
+    return user;
+  });
+
+  User.prototype.checkPassword = function checkPassword(password) {
+    return bcrypt.compare(password, this.passwordHash);
+  };
+
+  User.prototype.generateAuthToken = function generateAuthToken(
+    forgetPassword = false,
+  ) {
+    const { secret, expirationMinutes } = config.JWT;
+
+    if (forgetPassword) {
+      return jwt.sign({ id: this.id }, secret, {
+        expiresIn: `${expirationMinutes}m`,
+      });
+    }
+
+    return jwt.sign({ id: this.id }, secret);
+  };
+
   return User;
 };

@@ -5,7 +5,19 @@ const disciplines = [
     name: 'Introdução a Ciência da Computação',
     code: 7890,
     description: '',
-    courseId: 2,
+    courseId: 1,
+    summary: '',
+    period: 1,
+    type: 'obrigatoria',
+    value: 4,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    name: 'Calculo I',
+    code: 2000,
+    description: '',
+    courseId: 1,
     summary: '',
     period: 1,
     type: 'obrigatoria',
@@ -36,7 +48,7 @@ module.exports = {
         },
         ['id'],
       );
-      if (existedCourse || existedCourse.length > 0) {
+      if (existedCourse) {
         if (!existedDiscipline || existedDiscipline.length === 0) await queryInterface.bulkInsert('Disciplines', [discipline], {});
         else console.log(`Disciplina com o nome '${discipline.name}' já existe`);
       } else {
