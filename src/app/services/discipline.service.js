@@ -9,25 +9,23 @@ const getByName = (name) => Discipline.findOne({
     name,
   },
 });
+const getDiscipline = (id) => Discipline.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
+});
 
 const getById = (id) => Discipline.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
   include: [
     {
       model: Discipline,
-      as: 'discipline',
-      attributes: {
-        exclude: [
-          'createdAt',
-          'updatedAt',
-          'description',
-          'summary',
-          'period',
-          'value',
-          'courseId',
-          'name',
-          'code',
-          'type',
-        ],
+      as: 'dependency',
+      attributes: ['id', 'name', 'period', 'type'],
+      through: {
+        attributes: [],
       },
     },
   ],
@@ -95,6 +93,7 @@ module.exports = {
   create,
   getByName,
   getById,
+  getDiscipline,
   getAll,
   updateDiscipline,
   deleteDiscipline,

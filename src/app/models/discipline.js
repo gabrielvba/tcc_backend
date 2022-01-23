@@ -19,12 +19,12 @@ module.exports = (sequelize, DataTypes) => {
     });
     Discipline.belongsToMany(models.Discipline, {
       through: 'DisciplineDependencies',
-      foreignKey: 'disciplineId',
+      foreignKey: 'dependencyId',
       as: 'discipline',
     });
     Discipline.belongsToMany(models.Discipline, {
       through: 'DisciplineDependencies',
-      foreignKey: 'dependencyId',
+      foreignKey: 'disciplineId',
       as: 'dependency',
     });
     Discipline.belongsToMany(models.User, {

@@ -4,21 +4,31 @@ const { DisciplineDependency, Discipline } = require('../models');
 
 const create = (data) => DisciplineDependency.create(data);
 
-const getById = (id) => DisciplineDependency.findByPk(id);
+const getById = (id) => DisciplineDependency.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
+});
 
 const getByDisciplineId = (id) => DisciplineDependency.findAll({
   where: {
     disciplineId: id,
   },
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
   include: [
     {
       model: Discipline,
       as: 'dependency',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt'],
+      },
     },
   ],
 });
 
-const getByDisciplineIdAndDependencyId = (dependency) => DisciplineDependency.findAll({
+const getByDisciplineIdAndDependencyId = (dependency) => DisciplineDependency.findOne({
   where: {
     disciplineId: dependency.disciplineId,
     dependencyId: dependency.dependencyId,

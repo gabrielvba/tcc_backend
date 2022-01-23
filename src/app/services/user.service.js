@@ -11,15 +11,26 @@ const getByEmail = (email) => User.findOne({
 });
 
 const getById = (id) => User.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
   include: [
     {
       model: Discipline,
-      as: 'user',
+      as: 'schoolRecords',
+      attributes: ['id', 'name', 'period', 'type'],
+      through: {
+        attributes: [],
+      },
     },
   ],
 });
 
-const getJustUserById = (id) => User.findByPk(id);
+const getJustUserById = (id) => User.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
+});
 
 const getAll = async (query) => {
   const page = parseInt(query.page, 10);
