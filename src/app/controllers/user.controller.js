@@ -1,6 +1,7 @@
 const httpStatus = require('http-status-codes');
 const log = require('../services/log.service');
 const service = require('../services/user.service');
+const profileService = require('../services/profile.service');
 
 const { StatusCodes } = httpStatus;
 
@@ -25,8 +26,22 @@ const create = async (req, res) => {
         .json({ error: 'Um usuário de mesmo email já existe.' });
     }
 
+    const userData = {
+      email: user.email,
+      password: user.password,
+    };
+
     log.info('Criando usuário');
-    const newUser = await service.create(user);
+    const newUser = await service.create(userData);
+
+    const profileData = {
+      name: user.name,
+      lastName: user.lastName,
+      userId: newUser.id,
+    };
+
+    log.info('Criando perfil do usuário');
+    await profileService.create(profileData);
 
     log.info(`Buscando usuário por id = ${newUser.id}`);
     const userInfo = await service.getJustUserById(newUser.id);
@@ -100,11 +115,8 @@ const getById = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    const { query } = req;
-
-    log.info(`Iniciando listagem dos usuarios, page: ${query.page}`);
-
-    const users = await service.getAll(query);
+    log.info('Iniciando listagem dos usuarios');
+    const users = await service.getAll();
 
     log.info('Busca finalizada com sucesso');
     return res.status(StatusCodes.OK).json(users);

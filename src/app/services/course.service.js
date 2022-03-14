@@ -16,6 +16,24 @@ const getById = async (id, includeDiscipline = true) => {
         attributes: {
           exclude: ['createdAt', 'updatedAt', 'courseId'],
         },
+        include: [
+          {
+            model: Discipline,
+            as: 'dependency',
+            attributes: ['id', 'name', 'period', 'type'],
+            through: {
+              attributes: [],
+            },
+          },
+          {
+            model: Discipline,
+            as: 'discipline',
+            attributes: ['id', 'name', 'period', 'type'],
+            through: {
+              attributes: [],
+            },
+          },
+        ],
       },
     });
   } else {

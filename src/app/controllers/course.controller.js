@@ -1,6 +1,7 @@
 const httpStatus = require('http-status-codes');
 const log = require('../services/log.service');
 const service = require('../services/course.service');
+const profileService = require('../services/profile.service');
 
 const { StatusCodes } = httpStatus;
 
@@ -52,17 +53,45 @@ const getAll = async (req, res) => {
   }
 };
 
+// const getMe = async (req, res) => {
+//   try {
+//     const { user } = req;
+//     const { query } = req;
+
+//     log.info(`Iniciando listagem dos cursos, page: ${query.page}`);
+
+//     const courses = await service.getMe(user, query);
+
+//     log.info('Busca finalizada com sucesso');
+//     return res.status(StatusCodes.OK).json(courses);
+//   } catch (error) {
+//     const errorMsg = 'Erro ao buscar curso';
+
+//     log.error(errorMsg, 'app/controllers/course.controller.js', error.message);
+
+//     return res
+//       .status(StatusCodes.INTERNAL_SERVER_ERROR)
+//       .json({ error: `${errorMsg} ${error.message}` });
+//   }
+// };
+
 const getMe = async (req, res) => {
   try {
     const { user } = req;
-    const { query } = req;
 
-    log.info(`Iniciando listagem dos cursos, page: ${query.page}`);
+    log.info('Buscando curso atual:');
+    const profile = await profileService.getById(user.id);
 
-    const courses = await service.getMe(user, query);
+    if (!profile.currentCourseId) {
+      return res
+        .status(StatusCodes.BAD_REQUEST)
+        .json({ error: 'O usuario não tem um curso atual' });
+    }
+
+    const course = await service.getById(profile.currentCourseId);
 
     log.info('Busca finalizada com sucesso');
-    return res.status(StatusCodes.OK).json(courses);
+    return res.status(StatusCodes.OK).json(course);
   } catch (error) {
     const errorMsg = 'Erro ao buscar curso';
 
