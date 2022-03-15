@@ -1,6 +1,7 @@
 const httpStatus = require('http-status-codes');
 const log = require('../services/log.service');
 const service = require('../services/user.service');
+const profileService = require('../services/profile.service');
 
 const { StatusCodes } = httpStatus;
 
@@ -25,16 +26,57 @@ const create = async (req, res) => {
         .json({ error: 'Um usuário de mesmo email já existe.' });
     }
 
+    const userData = {
+      email: user.email,
+      password: user.password,
+    };
+
     log.info('Criando usuário');
-    const newUser = await service.create(user);
+    const newUser = await service.create(userData);
+
+    const profileData = {
+      name: user.name,
+      lastName: user.lastName,
+      userId: newUser.id,
+    };
+
+    log.info('Criando perfil do usuário');
+    await profileService.create(profileData);
 
     log.info(`Buscando usuário por id = ${newUser.id}`);
-    const userInfo = await service.getById(newUser.id);
+    const userInfo = await service.getJustUserById(newUser.id);
 
     log.info('Finalizado a criação de usuário.');
     return res.status(StatusCodes.CREATED).json(userInfo);
   } catch (error) {
     const errorMsg = 'Erro ao criar usuário';
+
+    log.error(errorMsg, 'app/controllers/user.controller.js', error.message);
+
+    return res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ error: `${errorMsg} ${error.message}` });
+  }
+};
+
+const getMe = async (req, res) => {
+  try {
+    const { id } = req.user;
+
+    log.info(`Iniciando busca por usuário. userId = ${id}`);
+
+    const user = await service.getById(id);
+
+    if (!user) {
+      return res
+        .status(StatusCodes.NOT_FOUND)
+        .json({ error: 'Usuário não encontrado' });
+    }
+
+    log.info(`Finalizando busca por usuário. userId = ${id}`);
+    return res.status(StatusCodes.OK).json(user);
+  } catch (error) {
+    const errorMsg = 'Erro buscar usuário';
 
     log.error(errorMsg, 'app/controllers/user.controller.js', error.message);
 
@@ -73,11 +115,8 @@ const getById = async (req, res) => {
 
 const getAll = async (req, res) => {
   try {
-    const { query } = req;
-
-    log.info(`Iniciando listagem dos usuarios, page: ${query.page}`);
-
-    const users = await service.getAll(query);
+    log.info('Iniciando listagem dos usuarios');
+    const users = await service.getAll();
 
     log.info('Busca finalizada com sucesso');
     return res.status(StatusCodes.OK).json(users);
@@ -94,24 +133,15 @@ const getAll = async (req, res) => {
 
 const edit = async (req, res) => {
   try {
-    const { id } = req.params;
-    const { user } = req.body;
+    const { id } = req.user;
+    const { newUser } = req.body;
 
     log.info(`Iniciando atualização do usuário. userId = ${id}`);
-    log.info('Verificando se usuário existe');
 
-    const existedUser = await service.getJustUserById(id);
+    if (newUser?.email) {
+      log.info(`Validando email. email = ${newUser.email}`);
 
-    if (!existedUser) {
-      res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'Usuário não encontrado' });
-    }
-
-    if (user?.email) {
-      log.info(`Validando email. email = ${user.email}`);
-
-      const userWithSameEmail = await service.getByEmail(user.email);
+      const userWithSameEmail = await service.getByEmail(newUser.email);
 
       if (userWithSameEmail && `${userWithSameEmail.id}` !== `${id}`) {
         return res
@@ -120,13 +150,13 @@ const edit = async (req, res) => {
       }
     }
 
-    if (user) {
+    if (newUser) {
       log.info('Atualizando dados do usuário');
-      await service.updateUser(id, user);
+      await service.updateUser(id, newUser);
     }
 
     log.info('Buscando dados atualizados do usuário');
-    const userInfo = await service.getById(id);
+    const userInfo = await service.getJustUserById(id);
 
     log.info('Finalizando atualização');
     return res.status(StatusCodes.OK).json(userInfo);
@@ -143,7 +173,7 @@ const edit = async (req, res) => {
 
 const deleteUser = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { id } = req.user;
 
     log.info(`Iniciando remoção de usuário. userId = ${id}`);
 
@@ -173,6 +203,7 @@ const deleteUser = async (req, res) => {
 module.exports = {
   create,
   getById,
+  getMe,
   getAll,
   edit,
   deleteUser,

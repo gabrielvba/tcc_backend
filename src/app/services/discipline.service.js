@@ -1,33 +1,91 @@
 // const { Op } = require('sequelize');
-const { Discipline } = require('../models');
-// const log = require('./log.service');
+const { Discipline, DisciplineDependency } = require('../models');
+const log = require('./log.service');
 
 const create = (data) => Discipline.create(data);
+
+const getByDisciplineIdAndDependencyId = (dependency) => DisciplineDependency.findOne({
+  where: {
+    disciplineId: dependency.disciplineId,
+    dependencyId: dependency.dependencyId,
+  },
+});
+
+const createDependency = (data) => DisciplineDependency.create(data);
+const removeDependency = (dependecy) => dependecy.destroy();
+
+const removeDependencies = async (disciplines, disciplineId) => {
+  await Promise.all(
+    disciplines.map(async (dependencyId) => {
+      const dependency = {
+        disciplineId,
+        dependencyId,
+      };
+      const existDependency = await getByDisciplineIdAndDependencyId(
+        dependency,
+      );
+      if (existDependency) {
+        log.info(
+          `Excluindo dependencia da disciplina: ${disciplineId} com ${dependencyId}`,
+        );
+        removeDependency(existDependency);
+      } else {
+        log.info(
+          `Não foi encontrada dependencia entre aa disciplina: ${disciplineId} com ${dependencyId}`,
+        );
+      }
+    }),
+  );
+};
+
+const createDependencies = async (disciplines, disciplineId) => {
+  await Promise.all(
+    disciplines.map(async (dependencyId) => {
+      const dependency = {
+        disciplineId,
+        dependencyId,
+      };
+      const existDependency = await getByDisciplineIdAndDependencyId(
+        dependency,
+      );
+      if (existDependency) {
+        log.info(
+          `A dependencya de id ${disciplineId} com ${dependencyId} já existe`,
+        );
+      } else {
+        const newDependency = await createDependency(dependency);
+        if (newDependency) {
+          log.info(
+            `nova dependencia criada com sucesso disciplineId: ${disciplineId} dependencyId: ${dependencyId}`,
+          );
+        }
+      }
+    }),
+  );
+};
 
 const getByName = (name) => Discipline.findOne({
   where: {
     name,
   },
 });
+const getDiscipline = (id) => Discipline.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
+});
 
 const getById = (id) => Discipline.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
   include: [
     {
       model: Discipline,
-      as: 'discipline',
-      attributes: {
-        exclude: [
-          'createdAt',
-          'updatedAt',
-          'description',
-          'summary',
-          'period',
-          'value',
-          'courseId',
-          'name',
-          'code',
-          'type',
-        ],
+      as: 'dependency',
+      attributes: ['id', 'name', 'period', 'type'],
+      through: {
+        attributes: [],
       },
     },
   ],
@@ -95,7 +153,10 @@ module.exports = {
   create,
   getByName,
   getById,
+  getDiscipline,
   getAll,
   updateDiscipline,
   deleteDiscipline,
+  createDependencies,
+  removeDependencies,
 };

@@ -3,8 +3,27 @@
 const courses = [
   {
     name: 'Ciência da Computação',
+    userId: 1,
     minOptSpecific: 58,
     minOptGeneral: 16,
+    description: '',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    name: 'Teste Muitos cursos',
+    userId: 1,
+    minOptSpecific: 100,
+    minOptGeneral: 10,
+    description: '',
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  },
+  {
+    name: 'teste cursa seu curso',
+    userId: 2,
+    minOptSpecific: 20,
+    minOptGeneral: 33,
     description: '',
     createdAt: new Date(),
     updatedAt: new Date(),

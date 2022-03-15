@@ -1,6 +1,6 @@
-const { Op } = require('sequelize');
-const { User, Discipline } = require('../models');
-// const log = require('./log.service');
+const {
+  User, Discipline, Profile, Course,
+} = require('../models');
 
 const create = (data) => User.create(data);
 
@@ -11,65 +11,51 @@ const getByEmail = (email) => User.findOne({
 });
 
 const getById = (id) => User.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
   include: [
     {
       model: Discipline,
-      as: 'user',
+      as: 'schoolRecords',
+      attributes: ['id', 'name', 'period', 'type', 'value'],
+      through: {
+        attributes: ['status'],
+      },
+    },
+    {
+      model: Profile,
+      as: 'profile',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'userId'],
+      },
+      include: [
+        {
+          model: Course,
+          as: 'currentCourse',
+          attributes: {
+            exclude: ['createdAt', 'updatedAt'],
+          },
+        },
+      ],
+    },
+    {
+      model: Course,
+      as: 'courses',
+      attributes: {
+        exclude: ['createdAt', 'updatedAt', 'userId'],
+      },
     },
   ],
 });
 
-const getJustUserById = (id) => User.findByPk(id);
+const getJustUserById = (id) => User.findByPk(id, {
+  attributes: {
+    exclude: ['createdAt', 'updatedAt'],
+  },
+});
 
-const getAll = async (query) => {
-  const page = parseInt(query.page, 10);
-  const pageSize = parseInt(query.pageSize, 10);
-  let offset = null;
-  let users = null;
-  const { search } = query;
-
-  let where = {};
-
-  if (search) {
-    where = {
-      [Op.or]: [
-        {
-          name: {
-            [Op.iRegexp]: `${search}`,
-          },
-        },
-        {
-          lastName: {
-            [Op.iRegexp]: `${search}`,
-          },
-        },
-        {
-          email: {
-            [Op.iRegexp]: `${search}`,
-          },
-        },
-      ],
-    };
-  }
-
-  if (page && pageSize) offset = (page - 1) * pageSize;
-
-  if (offset !== null) {
-    const options = {
-      limit: pageSize,
-      offset,
-      distinct: true,
-      where,
-    };
-    users = await User.findAndCountAll(options);
-
-    users.pages = Math.ceil(users.count / pageSize);
-  } else {
-    users = await User.findAll({ where });
-  }
-
-  return users;
-};
+const getAll = () => User.findAll();
 
 const updateUser = (id, data) => User.update(data, {
   where: {
