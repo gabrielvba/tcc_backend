@@ -23,10 +23,10 @@ router.delete(
 );
 
 router.get('/me', auth.verifyToken, controller.getMe);
-router.get('/:id', auth.verifyToken, controller.getById);
-router.get('/', auth.verifyToken, controller.getAll);
 router.put('/', auth.verifyToken, controller.edit);
 router.post('/', controller.create);
 router.delete('/', auth.verifyToken, controller.deleteUser);
 
+router.get('/:id', auth.verifyToken, controller.getById); // provavelmente nao vai ser usada
+router.get('/', auth.verifyToken, controller.getAll); // so utilizada para testar o sistema
 module.exports = router;

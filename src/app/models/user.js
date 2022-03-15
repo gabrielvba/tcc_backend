@@ -7,18 +7,6 @@ module.exports = (sequelize, DataTypes) => {
   const User = sequelize.define(
     'User',
     {
-      name: {
-        type: DataTypes.STRING,
-        defaultValue: null,
-      },
-      lastName: {
-        type: DataTypes.STRING,
-        defaultValue: null,
-      },
-      description: {
-        type: DataTypes.STRING,
-        defaultValue: null,
-      },
       email: {
         type: DataTypes.STRING,
         unique: true,
@@ -49,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
     User.hasMany(models.Course, {
       foreignKey: 'userId',
       as: 'courses',
+    });
+    User.hasOne(models.Profile, {
+      foreignKey: 'userId',
+      as: 'profile',
     });
   };
 

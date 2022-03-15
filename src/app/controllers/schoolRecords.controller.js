@@ -39,38 +39,30 @@ const getByUserId = async (req, res) => {
 const create = async (req, res) => {
   try {
     const { id } = req.user;
-    const { schoolRecord } = req.body;
+    const { schoolRecords, updateSchoolRecords } = req.body;
 
-    if (!schoolRecord.disciplineId) {
+    if (!schoolRecords) {
       return res
         .status(StatusCodes.BAD_REQUEST)
         .json({ error: 'O id da disciplina precisa ser preenchido' });
     }
 
-    const discipline = await serviceDiscipline.getById(
-      schoolRecord.disciplineId,
-    );
-
-    if (!discipline) {
-      return res
-        .status(StatusCodes.BAD_REQUEST)
-        .json({ error: 'O disciplineId precisa ser valido' });
+    if (schoolRecords) {
+      log.info(
+        `Salvando disciplina no historico do user ${id}. Disciplina: ${schoolRecords}`,
+      );
+      await service.createSchoolRecords(schoolRecords, id);
+    }
+    if (updateSchoolRecords) {
+      log.info(
+        `Atualizando disciplina no historico do user ${id}. Disciplina: ${updateSchoolRecords}`,
+      );
+      await service.updateSchoolRecords(updateSchoolRecords, id);
     }
 
-    log.info(
-      `Salvando disciplina no historico do user ${id}. Disciplina: ${discipline.name} Status: ${schoolRecord.status} `,
-    );
-    const newSchoolRecord = await service.create({
-      ...schoolRecord,
-      userId: id,
-    });
-
-    log.info(
-      `Buscando registro da disciplina no historico: ${newSchoolRecord.id}`,
-    );
-    const newSchoolRecordInfo = await service.getById(newSchoolRecord.id);
-
     log.info('Finalizado registro da disciplina no historico.');
+    const newSchoolRecordInfo = await service.getByUserId(id);
+
     return res.status(StatusCodes.CREATED).json(newSchoolRecordInfo);
   } catch (error) {
     const errorMsg = 'Erro ao salvar disciplina no historico';

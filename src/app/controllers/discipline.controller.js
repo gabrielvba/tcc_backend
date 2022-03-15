@@ -37,6 +37,16 @@ const create = async (req, res) => {
     log.info(`Inicializando criação da Disciplina: ${discipline.name}`);
     const newDiscipline = await service.create(discipline);
 
+    if (discipline.dependencias) {
+      log.info(
+        `Salvando dependencias na disciplina de id = ${newDiscipline.id}`,
+      );
+      await service.createDependencies(
+        discipline.dependencias,
+        newDiscipline.id,
+      );
+    }
+
     log.info(`Buscando disciplina por id = ${newDiscipline.id}`);
     const newDisciplineInfo = await service.getDiscipline(newDiscipline.id);
 
@@ -160,6 +170,15 @@ const edit = async (req, res) => {
     if (discipline) {
       log.info('Atualizando dados da disciplina');
       await service.updateDiscipline(id, discipline);
+    }
+
+    if (discipline.dependencias) {
+      log.info(`Atualizando dependencias na disciplina de id = ${id}`);
+      await service.createDependencies(discipline.dependencias, id);
+    }
+    if (discipline.removeDependencies) {
+      log.info(`Excluindo dependencias na disciplina de id = ${id}`);
+      await service.removeDependencies(discipline.removeDependencies, id);
     }
 
     log.info('Buscando dados atualizados da disciplina');
