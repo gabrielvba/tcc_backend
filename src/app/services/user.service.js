@@ -18,7 +18,7 @@ const getById = (id) => User.findByPk(id, {
     {
       model: Discipline,
       as: 'schoolRecords',
-      attributes: ['id', 'name', 'period', 'type', 'value'],
+      attributes: ['id', 'name', 'period', 'type', 'value', 'courseId'],
       through: {
         attributes: ['status'],
       },
