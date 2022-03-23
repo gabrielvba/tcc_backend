@@ -8,7 +8,6 @@ module.exports = {
     },
     disciplineId: {
       type: Sequelize.INTEGER,
-      unique: true,
       allowNull: false,
       references: {
         model: 'Disciplines',

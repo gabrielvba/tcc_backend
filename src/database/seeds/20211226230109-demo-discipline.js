@@ -4,7 +4,8 @@ const disciplines = [
   {
     name: 'Introdução à Computação',
     code: 1411174,
-    description: '',
+    description:
+      'Apresentar uma Visão geral do curso de Ciência da Computação. Fornecer os conceitos básicos sobre computação, desde os componentes do computador (hardware e software) até as tecnologias mais conhecidas na área (redes, internet, sistemas operacionais).Ementa Histórico. Tecnologias e aplicações de computadores. Introdução à Ciência da Computação. Tecnologia da Informação. Representação e processamento da informação. Sistemas de numeração. Aritmética binária. Portas lógicas. Arquitetura de computadores. Unidade Central de Processamento. Memória. Sistemas de entrada e saída. Software, encadeamento e conjunto de instruções. Sistemas distribuídos de informação',
     courseId: 1,
     summary: '',
     period: 1,
@@ -64,7 +65,8 @@ const disciplines = [
   {
     name: 'Cálculo Diferencial e Integral I',
     code: 2000,
-    description: '',
+    description:
+      'OBJETIVOS: FINALIZADO O COMPONENTE CURRICULAR, O ESTUDANTE DEVE SER CAPAZ DE: Dar continuidade ao estudo do cálculo de funções reais de uma variável. Propiciar ao aluno o trabalho com aplicações da integral. Favorecer a formação e o desenvolvimento dos conceitos de seqüência e séries pelo aluno',
     courseId: 1,
     summary: '',
     period: 2,
@@ -100,7 +102,8 @@ const disciplines = [
   {
     name: 'Álgebra Linear I',
     code: 1109049,
-    description: '',
+    description:
+      'OBJETIVOS: Estudar transformações lineares em espaços vetoriais de dimensão finita visando sua utilização em disciplinas posteriores. Desenvolver o raciocino lógico-algébrico-formal. Estimular a redação matemática formal. EMENTA: Sistemas de equações lineares. Espaços Vetoriais. Transformações Lineares. Auto-valores e Auto-vetores. Diagonalização de Operadores Lineares. Aplicações.',
     courseId: 1,
     summary: '',
     period: 3,
@@ -112,7 +115,8 @@ const disciplines = [
   {
     name: 'Lógica para Computação',
     code: 1411307,
-    description: '',
+    description:
+      'A Lógica é uma das ciências mais antigas, mas com grande aplicação na atualidade. Suas origens datam do século IV a.C., sendo posterior apenas à Filosofia e Matemática, com as quais sempre esteve conectada. Os conhecimentos da Lógica foram revitalizados no século XX, graças a aplicação de novas técnicas da matemática e, nos últimos 50 anos teve sua importância ressaltada, devido às aplicações na Ciência da Computação',
     courseId: 1,
     summary: '',
     period: 3,
@@ -136,7 +140,8 @@ const disciplines = [
   {
     name: 'Estrutura de Dados',
     code: 1411305,
-    description: '',
+    description:
+      'Objetivos Compreender a análise de complexidade de tempo de algoritmos. Escolher algoritmos baseando-se em seu tempo de execução. Entender os principais métodos de ordenação. Compreender e usar as estruturas de dados básicas e avançadas e seus algoritmos.',
     courseId: 1,
     summary: '',
     period: 3,
@@ -160,7 +165,8 @@ const disciplines = [
   {
     name: 'Teoria dos Grafos',
     code: 1411304,
-    description: '',
+    description:
+      'Ementa: Introdução. Noções básicas: grafos orientados, não-orientados, bipartidos. Percursos em grafos. Casamentos. Subgrafos, hipergrafos, matróides e cliques. Árvores e árvores geradoras. Conectividade. Problemas de caminhos. Estabilidade e número cromático. Grafos planares. Circuitos Eulerianos e Hamiltonianos. Grafos sem circuitos. Redes. Fluxos em redes. Objetivos: Introduzir conceitos básicos da Teoria dos Grafos. Apresentar problemas que podem ser representados por grafos. Apresentar algoritmos importantes para a solução de problemas mais conhecidos.',
     courseId: 1,
     summary: '',
     period: 3,
@@ -208,7 +214,8 @@ const disciplines = [
   {
     name: 'Banco de Dados I',
     code: 1411193,
-    description: '',
+    description:
+      'Ao final da disciplina, o(a) aluno(a) deverá ser capaz de: Modelar um banco de dados conforme conceitos de modelagem conceitual e lógica; Analisar a qualidade de modelos relacionais considerando restrições de integridade e normalização.  Resolver problemas de álgebra relacional e cálculo relacional.  Utilizar linguagens de definição e manipulação de dados. Utilizar serviços básicos disponibilizados por um SGBD para otimização de consultas, proteção, recuperação a falhas, segurança e controle de concorrência.',
     courseId: 1,
     summary: '',
     period: 4,
@@ -220,7 +227,8 @@ const disciplines = [
   {
     name: 'Organização e Arquitetura de Computadores',
     code: 1411310,
-    description: '',
+    description:
+      'Objetivo Geral da Disciplina Compreender, na prática, os conceitos básicos de Ciência da Computação. Abrir a mente para a vasta gama de formas de implementação de sistemas computacionais disponíveis hoje em dia. Desenvolver uma visão crítica sobre os requisitos de desempenho associados a um sistema computacional.Objetivos específicos da disciplinaOs objetivos específicos são que o(a) aluno(a) compreenda como funciona uma porta lógica CMOS; um circuito sequencial (máquina de estados) composto de portas lógicas e flip-flops conectados a um sinal de relógio; de forma paralela, um conjunto de operadores realizados com portas lógicas, incluindo flip-flops uma unidade de controle programável por software; acesso a memória de dados e entrada/saída; desvio condicional e interrupção e execução privilegiada; cache;',
     courseId: 1,
     summary: '',
     period: 4,
@@ -232,7 +240,8 @@ const disciplines = [
   {
     name: 'Laboratório de Organização e Arquitetura de Computadores',
     code: 1411182,
-    description: '',
+    description:
+      'Compreender, na prática, os conceitos básicos de Ciência da Computação. Abrir a mente para a vasta gama de formas de implementação de sistemas computacionais disponíveis hoje em dia. Desenvolver uma visão crítica sobre os requisitos de desempenho associados a um sistema computacional. Objetivos específicos da disciplina Os objetivos específicos são que o(a) aluno(a) compreenda como funciona uma porta lógica CMOS; um circuito sequencial (máquina de estados) composto de portas lógicas e flip-flops conectados a um sinal de relógio; de forma paralela, um conjunto de operadores realizados com portas lógicas, incluindo flip-flops uma unidade de controle programável por software; acesso a memória de dados e entrada/saída; desvio condicional e interrupção e execução privilegiada; cache;',
     courseId: 1,
     summary: '',
     period: 4,
@@ -244,7 +253,8 @@ const disciplines = [
   {
     name: 'Estatística Aplicada',
     code: 1114222,
-    description: '',
+    description:
+      'disciplina "Laboratório de Estatística Aplicada" trata-se de um componente curricular com ementa variável, tendo em vista o seu objetivo e a forma como foi concebida na estrutura curricular do Curso de Graduação em Estatística da UFCG. I - Objetivos Possibilitar a aplicação dos conceitos teóricos e métodos estatísticos, que foram adquiridos pelo aluno ao longo do curso, em situações reais.  A obtenção dos objeivos será suportada pelas demandas provenientes do Laboratório de Análises Estatísticas - LANEST. Demandas estas originadas de diversos setores da Universidade (TCCS, dissertações e teses de programas de pós-graduação), como também da comunidade em geral.',
     courseId: 1,
     summary: '',
     period: 5,
@@ -292,7 +302,8 @@ const disciplines = [
   {
     name: 'Sistemas Operacionais',
     code: 1411192,
-    description: '',
+    description:
+      'bjetivos gerais Entender o papel do sistema operacional dentro de um sistema computacional Entender o funcionamento dos vários módulos que compõem um sistema operacional Desenvolver uma visão crítica sobre os requisitos de confiabilidade, segurança e desempenho, associados a um sistema operacional  Objetivos específicosCompreender os mecanismos básicos de: chamada ao sistema, tratamento de interrupções, bloqueio e escalonamento de processos Compreender as principais estruturas de dados de um sistema operacional Compreender os principais algoritmos utilizados para gerir a utilização dos recursos do sistema Compreender as necessidades e os mecanismos utilizados pelo sistema operacional para prover segurança para o sistema computacional',
     courseId: 1,
     summary: '',
     period: 5,
@@ -304,7 +315,8 @@ const disciplines = [
   {
     name: 'Teoria da Computação',
     code: 1411171,
-    description: '',
+    description:
+      'Teorias dos autômatos e das linguagens formais. Modelos computacionais: autômato finito e autômato de pilha. Linguagens regulares e linguagens livre-de-contexto. Propriedades e problemas. Parsing e ambiguidade em linguagens livre-de-contexto. Hierarquia de autômatos, de gramáticas e de linguagens. Teoria da computabilidade. Limitações dos autômatos. Máquina de Turing como modelo de algoritmo. Tese de Church-Turing, justificativa e consequências. Máquinas de Turing como reconhecedoras de linguagens e como calculadoras de funções. Problemas de decisão em linguagens regulares e livre-de-contexto. A indecidibilidade do problema da parada. Redução. ',
     courseId: 1,
     summary: '',
     period: 5,
@@ -328,7 +340,8 @@ const disciplines = [
   {
     name: 'Programação Concorrente',
     code: 1411315,
-    description: '',
+    description:
+      'Teremos três avaliações. As duas primeiras serão baseadas em duas provas. Para a terceira avaliação, teremos três opções, de livre escolha: projeto, seminário ou prova. Os projetos e seminários podem ser feitos em grupos A reposição consistirá de prova, feitaa ao fim do semestre, a depender do exercício perdido pelo aluno. Ementa Introdução à programação concorrente. Conceitos básicos. Exclusão mútua. Sincronização usando memória compartilhada. Concorrência em linguagens de programação. Problemas clássicos de programação concorrente. Resolução de problemas.',
     courseId: 1,
     summary: '',
     period: 6,
@@ -388,7 +401,8 @@ const disciplines = [
   {
     name: 'Projeto de Trabalho de Conclsão de Curso',
     code: 1411317,
-    description: '',
+    description:
+      'O objetivo deste documento é apresentar e discutir a natureza de trabalhos de conclusão de curso (TCCs) no contexto de Ciência da Computação. Tipicamente, TCCs tem um caráter científico e, por isso, há muita discussão sobre a validade ou não de propostas de TCC diante das exigências estabelecidas por esse viés.',
     courseId: 1,
     summary: '',
     period: 8,

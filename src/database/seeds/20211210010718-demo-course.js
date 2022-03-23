@@ -11,7 +11,7 @@ const courses = [
     updatedAt: new Date(),
   },
   {
-    name: 'Teste Muitos cursos',
+    name: 'Engenharia Civil',
     userId: 1,
     minOptSpecific: 100,
     minOptGeneral: 10,
@@ -20,7 +20,7 @@ const courses = [
     updatedAt: new Date(),
   },
   {
-    name: 'teste cursa seu curso',
+    name: 'Engenharia de Minas',
     userId: 2,
     minOptSpecific: 20,
     minOptGeneral: 33,
